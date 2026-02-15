@@ -44,11 +44,11 @@ export const cards: CardData[] = [
     themed: true,
     light: {
       src: "/hero/Asset_Video_2_LM.mp4",
-      poster: "/hero/Asset_Preview_2_LM.png",
+      poster: "/hero/Asset_Preview_2_LM.webp",
     },
     dark: {
       src: "/hero/Asset_Video_2_DM.mp4",
-      poster: "/hero/Asset_Preview_2_DM.png",
+      poster: "/hero/Asset_Preview_2_DM.webp",
     },
     alt: "Project showcase 2",
   },
@@ -56,7 +56,7 @@ export const cards: CardData[] = [
     type: "video",
     themed: false,
     src: "/hero/Asset_Video_3.mp4",
-    poster: "/hero/Asset_Preview_3.png",
+    poster: "/hero/Asset_Preview_3.webp",
     alt: "Project showcase 3",
     featured: true,
   },
@@ -65,11 +65,11 @@ export const cards: CardData[] = [
     themed: true,
     light: {
       src: "/hero/Asset_Video_4_LM.mp4",
-      poster: "/hero/Asset_Preview_4_LM.png",
+      poster: "/hero/Asset_Preview_4_LM.webp",
     },
     dark: {
       src: "/hero/Asset_Video_4_DM.mp4",
-      poster: "/hero/Asset_Preview_4_DM.png",
+      poster: "/hero/Asset_Preview_4_DM.webp",
     },
     alt: "Project showcase 4",
   },
