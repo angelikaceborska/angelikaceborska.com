@@ -1,0 +1,50 @@
+export function UnumLogo() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="invert-on-dark"
+      aria-label="UNUM"
+    >
+      <g clipPath="url(#unum-clip0)">
+        <g clipPath="url(#unum-clip1)">
+          <rect width="24" height="24" fill="white" />
+          <g clipPath="url(#unum-clip2)">
+            <rect
+              width="32.25"
+              height="32.25"
+              transform="translate(-4.125 -4.125)"
+              fill="black"
+            />
+            <path d="M28.125 -4.125H-4.125V28.125H28.125V-4.125Z" fill="black" />
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M14.4882 13.5607H13.3197V18.3377H14.4882V15.5378L16.1137 18.0682L17.7366 15.541V18.3377H18.9046V13.5607H17.7366V13.5639L16.1137 16.0911L14.4882 13.5607ZM6.4008 13.5607H5.23169V18.3377H10.7446V13.5607H9.5765V17.1686H6.4008V13.5607ZM14.4345 6.20496H13.2665V10.9819H14.4345V7.81044L17.7934 10.9819H18.962V6.20496H17.7934V9.37698L14.4345 6.20496ZM6.4008 6.20496H5.23169V10.9819H10.7446V6.20496H9.5765V9.81283H6.4008V6.20496Z"
+              fill="white"
+            />
+          </g>
+        </g>
+      </g>
+      <defs>
+        <clipPath id="unum-clip0">
+          <rect width="24" height="24" fill="white" />
+        </clipPath>
+        <clipPath id="unum-clip1">
+          <rect width="24" height="24" fill="white" />
+        </clipPath>
+        <clipPath id="unum-clip2">
+          <rect
+            width="32.25"
+            height="32.25"
+            fill="white"
+            transform="translate(-4.125 -4.125)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}

@@ -1,1 +1,20 @@
 @import "tailwindcss";
+@import "./theme.css";
+
+@theme {
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-instrument-serif);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-marquee {
+  animation: marquee 30s linear infinite;
+}

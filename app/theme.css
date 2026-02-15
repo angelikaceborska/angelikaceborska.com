@@ -1,0 +1,17 @@
+:root {
+  color-scheme: light dark;
+}
+
+@theme {
+  --color-main: light-dark(var(--color-neutral-950), var(--color-neutral-50));
+  --color-surface: light-dark(white, var(--color-neutral-950));
+  --color-surface-secondary: light-dark(var(--color-neutral-100), var(--color-neutral-900));
+  --color-muted: light-dark(var(--color-neutral-500), var(--color-neutral-400));
+  --color-border: light-dark(var(--color-neutral-200), var(--color-neutral-800));
+}
+
+@media (prefers-color-scheme: dark) {
+  .invert-on-dark {
+    filter: invert(1);
+  }
+}
