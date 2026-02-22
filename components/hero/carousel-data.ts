@@ -80,4 +80,17 @@ export const cards: CardData[] = [
     dark: "/hero/Asset_Image_5_DM.png",
     alt: "Project showcase 5",
   },
+  {
+    type: "video",
+    themed: true,
+    light: {
+      src: "/hero/Asset_Video_6_LM.mp4",
+      poster: "/hero/Asset_Preview_6_LM.webp",
+    },
+    dark: {
+      src: "/hero/Asset_Video_6_DM.mp4",
+      poster: "/hero/Asset_Preview_6_DM.webp",
+    },
+    alt: "Project showcase 6",
+  },
 ];
