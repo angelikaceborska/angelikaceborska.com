@@ -35,15 +35,15 @@ export function CarouselCard({ card }: { card: CardData }) {
 
   if (isFeatured) {
     return (
-      <div className="relative shrink-0 w-[300px] h-[300px] rounded-2xl overflow-hidden">
+      <div className="relative shrink-0 w-[240px] h-[240px] rounded-3xl md:w-[336px] md:h-[336px] md:rounded-[32px] lg:w-[420px] lg:h-[420px] lg:rounded-[40px] overflow-hidden">
         {media}
       </div>
     );
   }
 
   return (
-    <div className="shrink-0 w-[300px] h-[300px] rounded-2xl overflow-hidden bg-surface-secondary p-3">
-      <div className="relative w-full h-full rounded-xl overflow-hidden">{media}</div>
+    <div className="shrink-0 w-[240px] h-[240px] rounded-3xl md:w-[336px] md:h-[336px] md:rounded-[32px] lg:w-[420px] lg:h-[420px] lg:rounded-[40px] overflow-hidden bg-surface-secondary p-3">
+      <div className="relative w-full h-full rounded-xl md:rounded-[20px] lg:rounded-[28px] overflow-hidden">{media}</div>
     </div>
   );
 }

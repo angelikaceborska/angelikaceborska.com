@@ -14,15 +14,15 @@ export function ThemedImage({
       <Image
         src={light}
         alt={alt}
-        width={300}
-        height={300}
+        width={420}
+        height={420}
         className="w-full h-full object-cover dark:hidden"
       />
       <Image
         src={dark}
         alt={alt}
-        width={300}
-        height={300}
+        width={420}
+        height={420}
         className="hidden dark:block w-full h-full object-cover"
       />
     </>

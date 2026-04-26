@@ -1,8 +1,7 @@
 export function Headline() {
   return (
-    <h1 className="text-4xl md:text-5xl font-medium tracking-tighter text-center leading-tighter max-w-[12ch]">
-      Design for those who want{" "}
-      <em className="font-serif italic">better.</em>
+    <h1 className="font-semibold text-[28px] leading-[36px] md:text-[40px] md:leading-[52px] lg:text-[50px] lg:leading-[64px] tracking-[-1px] text-main">
+      Lead Product Designer for complex products.
     </h1>
   );
 }

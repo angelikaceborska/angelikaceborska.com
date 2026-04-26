@@ -9,7 +9,7 @@ export function Carousel() {
 
   return (
     <div className="w-full overflow-hidden">
-      <div className="flex gap-4 md:gap-6 animate-marquee hover:[animation-play-state:paused] w-max">
+      <div className="flex gap-4 animate-marquee hover:[animation-play-state:paused] w-max">
         {doubled.map((card, i) => (
           <CarouselCard key={i} card={card} />
         ))}
