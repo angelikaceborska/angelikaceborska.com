@@ -34,10 +34,10 @@ export type CardData =
 export const cards: CardData[] = [
   {
     type: "image",
-    themed: true,
-    light: "/hero/Asset_Image_1_LM.png",
-    dark: "/hero/Asset_Image_1_DM.png",
+    themed: false,
+    src: "/hero/New_Asset_Image_1.png",
     alt: "Project showcase 1",
+    featured: true,
   },
   {
     type: "video",
@@ -75,10 +75,10 @@ export const cards: CardData[] = [
   },
   {
     type: "image",
-    themed: true,
-    light: "/hero/Asset_Image_5_LM.png",
-    dark: "/hero/Asset_Image_5_DM.png",
+    themed: false,
+    src: "/hero/New_Asset_Image_5.png",
     alt: "Project showcase 5",
+    featured: true,
   },
   {
     type: "video",

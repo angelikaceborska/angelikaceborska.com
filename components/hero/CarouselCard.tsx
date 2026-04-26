@@ -14,9 +14,8 @@ export function CarouselCard({ card }: { card: CardData }) {
         <Image
           src={card.src}
           alt={card.alt}
-          width={300}
-          height={300}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
       )
     ) : card.themed ? (
@@ -36,7 +35,7 @@ export function CarouselCard({ card }: { card: CardData }) {
 
   if (isFeatured) {
     return (
-      <div className="shrink-0 w-[300px] h-[300px] rounded-2xl overflow-hidden">
+      <div className="relative shrink-0 w-[300px] h-[300px] rounded-2xl overflow-hidden">
         {media}
       </div>
     );
@@ -44,7 +43,7 @@ export function CarouselCard({ card }: { card: CardData }) {
 
   return (
     <div className="shrink-0 w-[300px] h-[300px] rounded-2xl overflow-hidden bg-surface-secondary p-3">
-      <div className="w-full h-full rounded-xl overflow-hidden">{media}</div>
+      <div className="relative w-full h-full rounded-xl overflow-hidden">{media}</div>
     </div>
   );
 }
