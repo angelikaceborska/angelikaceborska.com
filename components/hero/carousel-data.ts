@@ -56,7 +56,7 @@ export const cards: CardData[] = [
     type: "video",
     themed: false,
     src: "/hero/Asset_Video_3.mp4",
-    poster: "/hero/Asset_Preview_3.webp",
+    poster: "/hero/Asset_Preview_3.avif",
     alt: "Project showcase 3",
     featured: true,
   },
