@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { CardData } from "./carousel-data";
 import { ThemedImage } from "./ThemedImage";
 import { ThemedVideo } from "./ThemedVideo";
+import { LazyVideo } from "./LazyVideo";
 
 export function CarouselCard({ card }: { card: CardData }) {
   const isFeatured = "featured" in card && card.featured;
@@ -21,16 +22,12 @@ export function CarouselCard({ card }: { card: CardData }) {
     ) : card.themed ? (
       <ThemedVideo light={card.light} dark={card.dark} />
     ) : (
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
+      <LazyVideo
+        key={card.src}
+        src={card.src}
         poster={card.poster}
         className="w-full h-full object-cover"
-      >
-        <source src={card.src} type="video/mp4" />
-      </video>
+      />
     );
 
   if (isFeatured) {

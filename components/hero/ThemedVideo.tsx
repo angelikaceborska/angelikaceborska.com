@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { LazyVideo } from "./LazyVideo";
 
 export function ThemedVideo({
   light,
@@ -22,16 +23,11 @@ export function ThemedVideo({
   const active = isDark ? dark : light;
 
   return (
-    <video
+    <LazyVideo
       key={active.src}
-      autoPlay
-      loop
-      muted
-      playsInline
+      src={active.src}
       poster={active.poster}
       className="w-full h-full object-cover"
-    >
-      <source src={active.src} type="video/mp4" />
-    </video>
+    />
   );
 }
