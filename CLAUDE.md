@@ -35,7 +35,7 @@ Light/dark is driven by `prefers-color-scheme` + CSS `light-dark()` in `app/them
 - **Video playback.** `LazyVideo` is the single video primitive (`CarouselCard` and `ThemedVideo` both go through it). It uses an `IntersectionObserver` to call `play()` when a video first becomes visible and **never pauses afterwards** — pausing/resuming caused a poster-flash (~200–500ms) at the loop boundary, and browsers (notably Safari) cap concurrent autoplaying videos. It also keeps a module-level `peers` registry keyed by `src` and snaps `currentTime` to a playing peer on intersection so duplicated video instances stay frame-aligned across the two tracks.
 
 ### Card data
-`carousel-data.ts` is a discriminated union over `{ type: "image" | "video" } × { themed: true | false } × { featured?: boolean }`. `CarouselCard` switches on these fields. Featured cards skip the inner padding/border-radius wrapper.
+`carousel-data.ts` is a discriminated union over `{ type: "image" | "video" } × { themed: true | false }`. `CarouselCard` switches on these fields and renders all cards full-bleed (no inner frame).
 
 ### Fonts
 Two font variables wired in `app/layout.tsx`: `--font-ppmori` (local woff in `app/fonts/`) and `--font-instrument-serif` (Google). Exposed to Tailwind as `font-sans` / `font-serif` via `@theme` in `globals.css`.

@@ -5,14 +5,12 @@ export type CardData =
       light: string;
       dark: string;
       alt: string;
-      featured?: false;
     }
   | {
       type: "image";
       themed: false;
       src: string;
       alt: string;
-      featured?: boolean;
     }
   | {
       type: "video";
@@ -20,7 +18,6 @@ export type CardData =
       light: { src: string; poster: string };
       dark: { src: string; poster: string };
       alt: string;
-      featured?: false;
     }
   | {
       type: "video";
@@ -28,7 +25,6 @@ export type CardData =
       src: string;
       poster: string;
       alt: string;
-      featured?: boolean;
     };
 
 export const cards: CardData[] = [
@@ -37,7 +33,6 @@ export const cards: CardData[] = [
     themed: false,
     src: "/hero/New_Asset_Image_1.png",
     alt: "Project showcase 1",
-    featured: true,
   },
   {
     type: "video",
@@ -58,7 +53,6 @@ export const cards: CardData[] = [
     src: "/hero/Asset_Video_3.mp4",
     poster: "/hero/Asset_Preview_3.avif",
     alt: "Project showcase 3",
-    featured: true,
   },
   {
     type: "video",
@@ -78,7 +72,6 @@ export const cards: CardData[] = [
     themed: false,
     src: "/hero/New_Asset_Image_5.png",
     alt: "Project showcase 5",
-    featured: true,
   },
   {
     type: "video",
