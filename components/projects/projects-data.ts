@@ -1,5 +1,6 @@
 export type Project = {
-  image: string;
+  light: string;
+  dark: string;
   width: number;
   height: number;
   description: string;
@@ -9,27 +10,30 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    image: "/my projects/Project image 1.avif",
-    width: 2584,
-    height: 1614,
+    light: "/my projects/Asset_Project_1_LM.avif",
+    dark: "/my projects/Asset_Project_1_DM.avif",
+    width: 1938,
+    height: 1212,
     description:
       "Boosting paid sign-ups by 4% by designing an agency-scale workspace model",
     status: "Case study soon",
     alt: "Workspace invite modal",
   },
   {
-    image: "/my projects/Project image 2.avif",
-    width: 2584,
-    height: 1500,
+    light: "/my projects/Asset_Project_2_LM.avif",
+    dark: "/my projects/Asset_Project_2_DM.avif",
+    width: 1938,
+    height: 1212,
     description:
       "Cutting activation time from 7 minutes to 4 by restructuring how users enter the product",
     status: "Case study soon",
     alt: "Channel connection onboarding",
   },
   {
-    image: "/my projects/Project image 3.avif",
-    width: 2584,
-    height: 1500,
+    light: "/my projects/Asset_Project_3_LM.avif",
+    dark: "/my projects/Asset_Project_3_DM.avif",
+    width: 1938,
+    height: 1212,
     description:
       "Lifting multi-platform posts per user by 5% by redesigning the editor for cross-platform publishing",
     status: "Case study soon",

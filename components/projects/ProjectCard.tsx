@@ -6,12 +6,20 @@ export function ProjectCard({ project }: { project: Project }) {
     <article className="flex flex-col gap-3">
       <div className="bg-surface-secondary rounded-3xl md:rounded-[32px] lg:rounded-[40px] overflow-hidden">
         <Image
-          src={project.image}
+          src={project.light}
           alt={project.alt}
           width={project.width}
           height={project.height}
           sizes="(min-width: 1024px) 900px, (min-width: 768px) 80vw, 100vw"
-          className="w-full h-auto block"
+          className="w-full h-auto block dark:hidden"
+        />
+        <Image
+          src={project.dark}
+          alt={project.alt}
+          width={project.width}
+          height={project.height}
+          sizes="(min-width: 1024px) 900px, (min-width: 768px) 80vw, 100vw"
+          className="w-full h-auto hidden dark:block"
         />
       </div>
       <div className="flex items-baseline justify-between gap-6 px-1">

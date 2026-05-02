@@ -12,7 +12,7 @@ export function ProjectsSection() {
       <div className="md:grid md:grid-cols-8 md:gap-4 w-full max-w-[1728px] mx-auto">
         <div className="md:col-start-2 md:col-span-6 flex flex-col gap-20 md:gap-[120px] lg:gap-[160px]">
           {projects.map((project) => (
-            <ProjectCard key={project.image} project={project} />
+            <ProjectCard key={project.light} project={project} />
           ))}
         </div>
       </div>
