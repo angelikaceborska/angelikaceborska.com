@@ -3,7 +3,7 @@ import type { Experience } from "./experience-data";
 
 export function ExperienceCard({ experience }: { experience: Experience }) {
   return (
-    <article className="flex flex-col gap-6 rounded-3xl md:rounded-[28px] lg:rounded-[32px] bg-surface-secondary p-6 md:p-8 lg:p-10">
+    <article className="flex flex-col gap-6 rounded-3xl md:rounded-[28px] lg:rounded-[32px] bg-surface-secondary p-6 md:p-8 lg:p-14 lg:pt-10">
       <span
         aria-hidden
         className="font-sans font-semibold text-[48px] leading-none md:text-[56px] lg:text-[64px] text-neutral-200 dark:text-neutral-800"
@@ -44,7 +44,9 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
             key={i}
             className="flex gap-3 font-sans font-normal text-[15px] leading-[22px] md:text-[16px] md:leading-[24px] lg:text-[18px] lg:leading-[26px] text-neutral-600 dark:text-neutral-400"
           >
-            <span aria-hidden className="shrink-0">→</span>
+            <span aria-hidden className="shrink-0">
+              →
+            </span>
             <span>{item}</span>
           </li>
         ))}
