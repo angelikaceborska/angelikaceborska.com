@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={ppMori.variable}>
+    <html lang="en" className={`${ppMori.variable} scroll-smooth`}>
       <body className="font-sans bg-surface text-main">{children}</body>
     </html>
   );

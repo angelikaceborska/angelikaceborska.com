@@ -26,7 +26,7 @@ const socials = [
 
 export function FooterSection() {
   return (
-    <footer className="px-6 md:px-0 pt-20 pb-6 md:pb-8">
+    <footer id="contact" className="px-6 md:px-0 pt-20 pb-6 md:pb-8 scroll-mt-24">
       <div className="md:grid md:grid-cols-8 md:gap-4 w-full max-w-[1728px] mx-auto">
         <div className="md:col-start-2 md:col-span-6 flex h-[472px] flex-col items-center justify-between self-stretch rounded-3xl md:rounded-[28px] lg:rounded-[32px] bg-surface-secondary px-8 py-12">
           <div className="flex flex-1 flex-col items-center justify-center gap-6 md:gap-8">

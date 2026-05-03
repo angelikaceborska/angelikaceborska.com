@@ -3,7 +3,7 @@ import { experiences } from "./experience-data";
 
 export function ExperienceSection() {
   return (
-    <section className="flex flex-col gap-12 md:gap-20 px-6 md:px-0 pt-20 pb-20">
+    <section id="experience" className="flex flex-col gap-12 md:gap-20 px-6 md:px-0 pt-20 pb-20 scroll-mt-24">
       <h2 className="font-semibold text-[28px] leading-[34px] md:text-[40px] md:leading-[44px] tracking-[-1px] text-main text-center">
         My path in
         <br />
