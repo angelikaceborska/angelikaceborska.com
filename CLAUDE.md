@@ -38,4 +38,4 @@ Light/dark is driven by `prefers-color-scheme` + CSS `light-dark()` in `app/them
 `carousel-data.ts` is a discriminated union over `{ type: "image" | "video" } × { themed: true | false }`. `CarouselCard` switches on these fields and renders all cards full-bleed (no inner frame).
 
 ### Fonts
-Two font variables wired in `app/layout.tsx`: `--font-ppmori` (local woff in `app/fonts/`) and `--font-instrument-serif` (Google). Exposed to Tailwind as `font-sans` / `font-serif` via `@theme` in `globals.css`.
+One font variable wired in `app/layout.tsx`: `--font-ppmori` (local woff in `app/fonts/`). Exposed to Tailwind as `font-sans` via `@theme` in `globals.css`. PP Mori is the only font on the site.
