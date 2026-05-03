@@ -42,7 +42,7 @@ export function Navigation() {
 
       <a
         href="mailto:angelika.ceborska@gmail.com"
-        className="inline-flex items-center justify-center rounded-[40px] px-5 py-2.5 text-[16px] leading-6 transition-opacity hover:opacity-80 bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
+        className="inline-flex items-center justify-center rounded-[40px] h-12 px-5 py-2.5 text-[16px] leading-6 transition-opacity hover:opacity-80 bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
       >
         Contact
       </a>
