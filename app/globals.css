@@ -4,3 +4,90 @@
 @theme {
   --font-sans: var(--font-ppmori);
 }
+
+/* About Me card micro-interactions.
+   Each icon's bespoke hover motion is keyed off `.about-card:hover`.
+   Everything is gated behind `prefers-reduced-motion: no-preference`,
+   matching the hero/about carousels which fully pause under reduce. */
+.about-icon {
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .about-icon-about,
+  .about-icon-code {
+    transform-origin: center;
+  }
+  .about-icon-pin {
+    transform-origin: bottom center;
+  }
+  .about-icon-tile,
+  .about-icon-bar,
+  .about-icon-dot,
+  .about-icon-ball {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .about-icon-bar {
+    transform-origin: bottom;
+  }
+
+  .about-card:hover .about-icon-about {
+    animation: about-nod 0.6s ease;
+  }
+  .about-card:hover .about-icon-code {
+    animation: about-spin 0.65s cubic-bezier(0.45, 0.05, 0.25, 1);
+  }
+  .about-card:hover .about-icon-pin {
+    animation: about-drop 0.6s cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+  .about-card:hover .about-icon-tile {
+    animation: about-pop 0.42s ease both;
+  }
+  .about-card:hover .about-icon-bar {
+    animation: about-grow 0.4s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  }
+  .about-card:hover .about-icon-dot {
+    animation: about-blip 0.9s ease-in-out infinite;
+  }
+  .about-card:hover .about-icon-ball {
+    animation: about-bob 0.9s ease-in-out infinite;
+  }
+}
+
+@keyframes about-nod {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(-12deg) scale(1.1); }
+  55% { transform: rotate(7deg); }
+  80% { transform: rotate(-3deg); }
+  100% { transform: rotate(0); }
+}
+@keyframes about-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.14); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes about-drop {
+  0% { transform: translateY(-16px); }
+  55% { transform: translateY(2px) scaleY(0.9); }
+  75% { transform: translateY(-2px) scaleY(1); }
+  100% { transform: translateY(0); }
+}
+@keyframes about-pop {
+  0% { transform: scale(0.2); opacity: 0; }
+  65% { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes about-grow {
+  0% { transform: scaleY(0); }
+  70% { transform: scaleY(1.08); }
+  100% { transform: scaleY(1); }
+}
+@keyframes about-blip {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.6); opacity: 1; }
+}
+@keyframes about-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
