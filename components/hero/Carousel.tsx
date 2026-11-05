@@ -23,7 +23,12 @@ export function Carousel() {
     let xA = 0;
     let xB = 0;
     let last = performance.now();
-    let paused = false;
+    // Two independent reasons to stand still. Kept apart so that moving the
+    // mouse off the strip never restarts it for a reduced-motion visitor.
+    let hovered = false;
+    let reducedMotion = false;
+    // Whether an enter event can be trusted as a real hover. See onHidden.
+    let hoverTrusted = true;
     let raf = 0;
 
     const tick = (now: number) => {
@@ -37,7 +42,7 @@ export function Carousel() {
       const dt = Math.min((now - last) / 1000, 0.1);
       last = now;
 
-      if (!paused) {
+      if (!hovered && !reducedMotion) {
         const dx = SPEED_PX_PER_SEC * dt;
         xA -= dx;
         xB -= dx;
@@ -58,18 +63,41 @@ export function Carousel() {
     raf = requestAnimationFrame(tick);
 
     const onEnter = () => {
-      paused = true;
+      if (hoverTrusted) hovered = true;
+    };
+    // A real pointer always moves; this also catches the first real move
+    // after an untrusted enter, so a visitor who is genuinely over the strip
+    // still pauses it.
+    const onMove = () => {
+      hoverTrusted = true;
+      hovered = true;
     };
     const onLeave = () => {
-      paused = false;
+      hovered = false;
       last = performance.now();
     };
+    // Safari restores a stale hover when a tab comes back into view (or the
+    // page returns from the back/forward cache): it fires mouseenter for
+    // wherever the mouse was before, with no movement, even if the mouse is
+    // now elsewhere. Without this the strip froze after switching tabs,
+    // until the mouse happened to pass over it again.
+    const onHidden = () => {
+      hovered = false;
+      hoverTrusted = false;
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") onHidden();
+      else last = performance.now();
+    };
     container.addEventListener("mouseenter", onEnter);
+    container.addEventListener("mousemove", onMove);
     container.addEventListener("mouseleave", onLeave);
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", onHidden);
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updateMotion = () => {
-      paused = mq.matches;
+      reducedMotion = mq.matches;
     };
     updateMotion();
     mq.addEventListener("change", updateMotion);
@@ -77,7 +105,10 @@ export function Carousel() {
     return () => {
       cancelAnimationFrame(raf);
       container.removeEventListener("mouseenter", onEnter);
+      container.removeEventListener("mousemove", onMove);
       container.removeEventListener("mouseleave", onLeave);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", onHidden);
       mq.removeEventListener("change", updateMotion);
     };
   }, []);

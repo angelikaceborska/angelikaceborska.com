@@ -12,7 +12,6 @@
   --bc-green-600: #00985d;
 
   --bc-shadow-gentle: 0 4px 10px 2px rgba(238, 238, 238, 0.6);
-  --bc-shadow-bar: 0 4px 6px 1px rgba(238, 238, 238, 0.3);
   --bc-shadow-below-low: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
   --bc-shadow-below-medium: 0 8px 36px 0 rgba(0, 0, 0, 0.17);
 
@@ -102,7 +101,6 @@
     --bc-tabs-text: #a4a4a4;
     --bc-shadow-card: 0 4px 10px 2px rgba(19, 19, 19, 0.6); /* "Dark mode" */
     --bc-shadow-control: 0 4px 6px 2px rgba(48, 48, 48, 0.3); /* "Gentle dark mode" */
-    --bc-shadow-bar: 0 4px 6px 1px rgba(48, 48, 48, 0.3);
     --bc-shadow-raised: 0 4px 16px 0 rgba(48, 48, 48, 0.12);
     --bc-shadow-tooltip: 0 8px 36px 8px rgba(48, 48, 48, 0.5);
   }
@@ -422,9 +420,12 @@
   pointer-events: none;
 }
 
-/* The AVG line moves with the bars when the range changes, on their curve and timing. */
+/* The AVG line moves with the bars when the range changes, on their curve and timing.
+   It's positioned with a transform (set inline), so the move happens on the GPU
+   instead of redrawing the line on every frame. */
 .bc-avg {
-  transition: top 600ms var(--bc-ease-smooth-out);
+  top: 0;
+  transition: transform 600ms var(--bc-ease-smooth-out);
 }
 
 .bc-gridline {
@@ -494,15 +495,21 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Bars at rest have no shadow and no clipping. Figma's resting bar shadow
+   (0 4px 6px 1px, #EEEEEE at 30%) is practically invisible on the white card,
+   but a soft shadow on a clipped rounded box is very expensive for Safari to
+   redraw, and the height animation redraws all 30 bars on every frame. On a
+   live Safari 27 recording that dropped the whole hero strip to 30fps for a
+   second at each grow-in and range switch. The clip isn't needed: the fill
+   below is inset and has its own rounded corners. The hovered bar keeps its
+   visible shadow (one bar, outside those animations). */
 .bc-bar {
   position: absolute;
   left: 50%;
   translate: -50% 0;
-  overflow: hidden;
   border: 1px solid var(--bc-bar-border);
   border-radius: 10px;
   background: var(--bc-fill-subtle);
-  box-shadow: var(--bc-shadow-bar);
   /* Height: Bencho's "Stacked bars" (MIT, bencho.dev/licence). Every bar "eases
      to its new height … a beat after its left neighbour" (14ms × --i), and the
      same 600ms transition grows them out of the baseline on first view. Its curve,

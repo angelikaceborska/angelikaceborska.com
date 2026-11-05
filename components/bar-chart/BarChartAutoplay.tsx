@@ -355,12 +355,14 @@ export function BarChartAutoplay({
   }, []);
   const visitorIn = () => {
     clearTimeout(resumeTimer.current);
+    resumeTimer.current = 0;
     setVisitor(true);
     latest.current.onVisitorChange?.(true);
   };
   const visitorOut = (after: number) => {
     clearTimeout(resumeTimer.current);
     resumeTimer.current = window.setTimeout(() => {
+      resumeTimer.current = 0;
       setVisitor(false);
       latest.current.onVisitorChange?.(false);
     }, after);
@@ -370,7 +372,13 @@ export function BarChartAutoplay({
     <div
       ref={wrapRef}
       className="bc-autoplay"
-      onPointerEnter={(e) => e.pointerType === "mouse" && visitorIn()}
+      // Movement, not entry: Safari fires a stale pointerenter (with no movement) when a tab
+      // comes back into view, which would otherwise stop the demo with nobody there. A real
+      // visitor always moves. Also cancels a pending resume if they came straight back.
+      onPointerMove={(e) => {
+        if (e.pointerType === "mouse" && (!visitor || resumeTimer.current))
+          visitorIn();
+      }}
       onPointerLeave={(e) =>
         e.pointerType === "mouse" && visitorOut(RESUME_AFTER)
       }

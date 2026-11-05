@@ -471,7 +471,11 @@ export function BarChart({
         ))}
 
         {showAverage && days.length > 0 && (
-          <div className="bc-avg" style={{ top: avgY }} aria-hidden="true">
+          <div
+            className="bc-avg"
+            style={{ transform: `translateY(${avgY}px)` }}
+            aria-hidden="true"
+          >
             <span className="bc-avg-line" />
             <span className="bc-avg-label">AVG</span>
           </div>
@@ -510,7 +514,11 @@ export function BarChart({
                 aria-label={`${day.tooltipLabel}: ${day.items
                   .map((it) => `${it.label} ${it.value}`)
                   .join(", ")}. Total ${day.total}`}
-                onPointerEnter={(e) => e.pointerType === "mouse" && show(i)}
+                // Movement, not entry: Safari replays a stale pointerenter when a tab comes
+                // back into view, which would pop a tooltip under a mouse that isn't there.
+                onPointerMove={(e) =>
+                  e.pointerType === "mouse" && active !== i && show(i)
+                }
                 onClick={() => show(i)}
                 onFocus={() => {
                   setFocusIndex(i);
