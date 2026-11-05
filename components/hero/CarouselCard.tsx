@@ -3,10 +3,13 @@ import type { CardData } from "./carousel-data";
 import { ThemedImage } from "./ThemedImage";
 import { ThemedVideo } from "./ThemedVideo";
 import { LazyVideo } from "./LazyVideo";
+import { ChartDemoCard } from "./ChartDemoCard";
 
 export function CarouselCard({ card }: { card: CardData }) {
   const media =
-    card.type === "image" ? (
+    card.type === "chart" ? (
+      <ChartDemoCard alt={card.alt} />
+    ) : card.type === "image" ? (
       card.themed ? (
         <ThemedImage light={card.light} dark={card.dark} alt={card.alt} />
       ) : (

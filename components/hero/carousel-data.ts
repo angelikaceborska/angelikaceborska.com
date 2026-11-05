@@ -25,14 +25,17 @@ export type CardData =
       src: string;
       poster: string;
       alt: string;
+    }
+  | {
+      // The live bar chart demo (ChartDemoCard). Themes itself via prefers-color-scheme.
+      type: "chart";
+      alt: string;
     };
 
 export const cards: CardData[] = [
   {
-    type: "image",
-    themed: false,
-    src: "/hero/New_Asset_Image_1.png",
-    alt: "Project showcase 1",
+    type: "chart",
+    alt: "Scheduled posts bar chart, playing an interactive demo",
   },
   {
     type: "video",

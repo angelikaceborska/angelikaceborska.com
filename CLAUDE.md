@@ -35,7 +35,10 @@ Light/dark is driven by `prefers-color-scheme` + CSS `light-dark()` in `app/them
 - **Video playback.** `LazyVideo` is the single video primitive (`CarouselCard` and `ThemedVideo` both go through it). It uses an `IntersectionObserver` to call `play()` when a video first becomes visible and **never pauses afterwards** — pausing/resuming caused a poster-flash (~200–500ms) at the loop boundary, and browsers (notably Safari) cap concurrent autoplaying videos. It also keeps a module-level `peers` registry keyed by `src` and snaps `currentTime` to a playing peer on intersection so duplicated video instances stay frame-aligned across the two tracks.
 
 ### Card data
-`carousel-data.ts` is a discriminated union over `{ type: "image" | "video" } × { themed: true | false }`. `CarouselCard` switches on these fields and renders all cards full-bleed (no inner frame).
+`carousel-data.ts` is a discriminated union over `{ type: "image" | "video" } × { themed: true | false }`, plus `{ type: "chart" }` for the live bar chart demo. `CarouselCard` switches on these fields and renders all cards full-bleed (no inner frame).
+
+### Bar chart demo (`type: "chart"`)
+`ChartDemoCard` lays out the Figma frame (1080×1080: photo + 780px card) at full size and scales it to the tile with a `ResizeObserver`, so it matches Figma at every tile size. The chart itself is `components/bar-chart/` (`BarChartAutoplay` wraps `BarChart` with a scripted cursor; a real mouse takes over, and the strip's existing hover-pause keeps the tile still meanwhile). It themes itself from `prefers-color-scheme` through role tokens in `BarChart.css`; dark values come from Figma node 107:500. It renders four times (two copies per track × two tracks), so it is kept out of keyboard focus (`focusable={false}`) and exposed to assistive tech as a single `role="img"`. On touch screens it ignores input and just plays.
 
 ### Fonts
-One font variable wired in `app/layout.tsx`: `--font-ppmori` (local woff in `app/fonts/`). Exposed to Tailwind as `font-sans` via `@theme` in `globals.css`. PP Mori is the only font on the site.
+One site-wide font variable wired in `app/layout.tsx`: `--font-ppmori` (local woff in `app/fonts/`). Exposed to Tailwind as `font-sans` via `@theme` in `globals.css`. PP Mori is the site's font. The one exception is the bar chart demo, which loads Inter and Karla through `next/font/google` in `ChartDemoCard.tsx` (scoped CSS variables `--font-inter` / `--font-karla`) to match its Figma design.

@@ -1,0 +1,90 @@
+/* ══ Rolling number ═════════════════════════════════════
+   Adapted from Bencho's "Rolling counter" (MIT, bencho.dev/licence).
+   Only the digit window is kept; the slab and button styles are
+   gone, and with them every Bencho token (--card, --fill-slab,
+   --fill-on, --pane-edge, --signal). Font, size, weight and colour
+   are inherited from whatever holds the number (.bc-total here),
+   which covers --font-ui and --ink. Comments are Bencho's unless
+   marked "(bar chart)". */
+
+.rct {
+  display: inline-flex;
+  vertical-align: top;
+}
+
+/* (bar chart) visually hidden, still read by screen readers */
+.rct-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.rct-num {
+  display: flex;
+  height: var(--rct-cell);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--rct-cell);
+  user-select: none;
+  /* rolling digits fade at the window's top and bottom edge */
+  mask-image: linear-gradient(transparent, #000 20%, #000 80%, transparent);
+}
+
+.rct-pair {
+  display: flex;
+}
+
+/* the number hugs its digits: a column arriving or leaving
+   animates its own width, so the number grows and shrinks with
+   the count rather than keeping room for digits it is not showing */
+.rct-col {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  height: var(--rct-cell);
+  transition:
+    width 320ms cubic-bezier(0.3, 1.2, 0.4, 1),
+    opacity 220ms ease;
+}
+
+/* (bar chart) 0.648em is one Inter tabular digit, measured; Bencho's font used 0.64em */
+.rct-col[data-on] {
+  width: 0.648em;
+  opacity: 1;
+}
+
+.rct-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  will-change: transform;
+}
+
+.rct-strip > span {
+  height: var(--rct-cell);
+}
+
+.rct-sep {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    width 320ms cubic-bezier(0.3, 1.2, 0.4, 1),
+    opacity 220ms ease;
+}
+
+/* (bar chart) an Inter comma at this size is 0.3em; Bencho's was 0.26em */
+.rct-sep[data-on] {
+  width: 0.3em;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rct-col,
+  .rct-sep {
+    transition: none;
+  }
+}

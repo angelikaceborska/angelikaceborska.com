@@ -1,0 +1,690 @@
+/* Tokens mirror the Figma styles used by the "Bar Chart" frame. */
+.bc-card {
+  --bc-white: #ffffff;
+  --bc-gray-25: #f7f7f7;
+  --bc-gray-50: #eeeeee;
+  --bc-gray-100: #d1d1d1;
+  --bc-gray-300: #818181;
+  --bc-gray-400: #666666;
+  --bc-gray-600: #434343;
+  --bc-gray-900: #212121;
+  --bc-gray-950: #151515;
+  --bc-green-600: #00985d;
+
+  --bc-shadow-gentle: 0 4px 10px 2px rgba(238, 238, 238, 0.6);
+  --bc-shadow-bar: 0 4px 6px 1px rgba(238, 238, 238, 0.3);
+  --bc-shadow-below-low: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+  --bc-shadow-below-medium: 0 8px 36px 0 rgba(0, 0, 0, 0.17);
+
+  /* Roles: what each colour is for. Rules use only these, so the dark theme below
+     swaps values without touching a single rule. Light from the "Bar Chart" frame
+     (100:1381), dark from its dark-mode frame (107:500). */
+  --bc-surface: var(--bc-white);
+  --bc-border: var(--bc-gray-50);
+  --bc-text: var(--bc-gray-600);
+  --bc-text-strong: var(--bc-gray-950);
+  --bc-text-hint: var(--bc-gray-300);
+  --bc-text-value: var(--bc-gray-900);
+  --bc-focus: var(--bc-gray-600);
+  --bc-grid: var(--bc-gray-50);
+  --bc-avg-bg: var(--bc-gray-50);
+  --bc-avg-text: var(--bc-gray-400);
+  --bc-badge-bg: rgba(0, 152, 93, 0.1);
+  --bc-badge-text: var(--bc-green-600);
+  --bc-fill-subtle: var(--bc-gray-25); /* bars, hovered menu option */
+  --bc-bar-border: var(--bc-gray-100);
+  --bc-tabs-track: var(--bc-gray-50);
+  --bc-tabs-pill: var(--bc-white);
+  --bc-tabs-text: var(--bc-gray-400);
+  --bc-shadow-card: var(--bc-shadow-gentle);
+  --bc-shadow-control: 0 4px 6px 1px rgba(238, 238, 238, 0.3),
+    0 4px 10px 0 rgba(238, 238, 238, 0.6);
+  --bc-shadow-raised: var(--bc-shadow-below-low); /* hovered bar, menu */
+  --bc-shadow-tooltip: var(--bc-shadow-below-medium);
+
+  --bc-font: var(--font-inter, "Inter"), system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --bc-font-label: var(--font-karla, "Karla"), var(--bc-font);
+  /* Motion: the transitions.dev token scale, scoped to the card so the component stays self-contained. */
+  --bc-duration-micro: 80ms; /* tooltip intent delay */
+  --bc-duration-quick: 150ms; /* dropdown close, tooltip appear, bar highlight */
+  --bc-duration-fast: 250ms; /* dropdown open, tooltip sliding between bars */
+  --bc-ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  width: 100%;
+  max-width: 780px;
+  padding: 24.5px; /* + 1.5px border = 26px, as in Figma */
+  background: var(--bc-surface);
+  border: 1.5px solid var(--bc-border);
+  border-radius: 20px;
+  box-shadow: var(--bc-shadow-card);
+  font-family: var(--bc-font);
+  color: var(--bc-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.bc-card *,
+.bc-card *::before,
+.bc-card *::after {
+  box-sizing: border-box;
+}
+
+.bc-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ---------- Dark mode (Figma 107:500), following the system setting like the rest of the site ---------- */
+
+@media (prefers-color-scheme: dark) {
+  .bc-card {
+    --bc-surface: #000000; /* Primary/Black */
+    --bc-border: #313131; /* UNUM Gray/800 */
+    --bc-text: #a4a4a4; /* UNUM Gray/200 */
+    --bc-text-strong: #f7f7f7; /* Gray/25 */
+    --bc-text-hint: #a4a4a4;
+    --bc-text-value: #eeeeee; /* Gray/50 */
+    --bc-focus: #a4a4a4;
+    --bc-grid: #313131;
+    --bc-avg-bg: #212121; /* Gray/900 */
+    --bc-avg-text: #a4a4a4;
+    --bc-badge-bg: rgba(0, 152, 93, 0.5);
+    --bc-badge-text: #00c273; /* UNUM Green/500 */
+    --bc-fill-subtle: #212121;
+    --bc-bar-border: #313131;
+    /* Not in Figma (the tabs replaced the dropdown): track and pill follow the bars' greys. */
+    --bc-tabs-track: #212121;
+    --bc-tabs-pill: #313131;
+    --bc-tabs-text: #a4a4a4;
+    --bc-shadow-card: 0 4px 10px 2px rgba(19, 19, 19, 0.6); /* "Dark mode" */
+    --bc-shadow-control: 0 4px 6px 2px rgba(48, 48, 48, 0.3); /* "Gentle dark mode" */
+    --bc-shadow-bar: 0 4px 6px 1px rgba(48, 48, 48, 0.3);
+    --bc-shadow-raised: 0 4px 16px 0 rgba(48, 48, 48, 0.12);
+    --bc-shadow-tooltip: 0 8px 36px 8px rgba(48, 48, 48, 0.5);
+  }
+}
+
+/* Icons that differ by theme ship as a light/dark pair (the trending arrow, the tooltip divider). */
+.bc-card .bc-only-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bc-card .bc-only-light {
+    display: none;
+  }
+
+  .bc-card .bc-only-dark {
+    display: block;
+  }
+}
+
+/* ---------- Header ---------- */
+
+/* Range button sits top-right; it wraps below the figures when the card is too narrow. */
+.bc-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+
+.bc-header-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.bc-headline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bc-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--bc-text);
+}
+
+.bc-figures {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bc-total {
+  margin: 0;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 500;
+  color: var(--bc-text-strong);
+}
+
+.bc-support {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.bc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px 2px 4px;
+  border-radius: 6px;
+  background: var(--bc-badge-bg);
+  color: var(--bc-badge-text);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.bc-hint {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--bc-text-hint);
+}
+
+.bc-range {
+  position: relative;
+  flex: none;
+}
+
+.bc-range-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px; /* + 1px border = 8px, as in Figma */
+  border: 1px solid var(--bc-border);
+  border-radius: 8px;
+  background: var(--bc-surface);
+  box-shadow: var(--bc-shadow-control);
+  font: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--bc-text);
+  cursor: pointer;
+}
+
+.bc-range-button:focus-visible {
+  outline: 2px solid var(--bc-focus);
+  outline-offset: 2px;
+}
+
+/* Chevron follows the menu: slower on open, quicker on close. */
+.bc-range-arrow {
+  transition: rotate var(--bc-duration-quick) var(--bc-ease-smooth-out);
+}
+
+.bc-range-button[aria-expanded="true"] .bc-range-arrow {
+  rotate: 180deg;
+  transition-duration: var(--bc-duration-fast);
+}
+
+/* Not in the Figma file: built from the card's own tokens (border, radius, Below/Low shadow). */
+.bc-range-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 100%;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--bc-surface);
+  border: 1px solid var(--bc-border);
+  border-radius: 12px;
+  box-shadow: var(--bc-shadow-raised);
+  outline: none;
+  transform-origin: top right;
+  /* Close: 150ms down to 0.99, then hidden. */
+  visibility: hidden;
+  opacity: 0;
+  scale: 0.99;
+  transition:
+    opacity var(--bc-duration-quick) var(--bc-ease-smooth-out),
+    scale var(--bc-duration-quick) var(--bc-ease-smooth-out),
+    visibility 0s var(--bc-duration-quick);
+}
+
+/* Open: 250ms up from 0.97 (a keyframe, so open and close can start from different scales). */
+.bc-range-menu[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+  scale: 1;
+  transition: visibility 0s;
+  animation: bc-menu-open var(--bc-duration-fast) var(--bc-ease-smooth-out);
+}
+
+@keyframes bc-menu-open {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+@keyframes bc-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.bc-range-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--bc-text);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bc-range-option[data-highlighted="true"] {
+  background: var(--bc-fill-subtle);
+}
+
+.bc-range-option[aria-selected="true"] {
+  color: var(--bc-text-strong);
+}
+
+.bc-range-check {
+  flex-shrink: 0;
+  color: var(--bc-text-strong);
+}
+
+/* ---------- Range tabs ----------
+   transitions.dev "Tabs sliding" (16-tabs-sliding.md). The .t-tabs rules below are the
+   recipe's CSS unchanged; its variables are set here from the card's palette instead of :root. */
+
+.bc-card {
+  --tabs-dur: var(--bc-duration-fast);
+  --tabs-ease: var(--bc-ease-smooth-out);
+  --tabs-text-muted: var(--bc-tabs-text);
+  --tabs-text-active: var(--bc-text-strong);
+  --tabs-bar-bg: var(--bc-tabs-track);
+  --tabs-pill-bg: var(--bc-tabs-pill);
+}
+
+/* The bar is just a flex container with padding for the pill
+   to sit inside. Tabs sit on z-index: 1, the pill on z-index: 0,
+   so labels read above the pill background. */
+.t-tabs {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 48px;
+  background: var(--tabs-bar-bg);
+}
+.t-tab {
+  position: relative;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  height: 30px;
+  padding: 4px 12px;
+  color: var(--tabs-text-muted);
+  cursor: pointer;
+  border-radius: 48px;
+  z-index: 1;
+  transition: color var(--tabs-dur) var(--tabs-ease);
+}
+.t-tab:not([aria-selected="true"]):hover,
+.t-tab[aria-selected="true"] {
+  color: var(--tabs-text-active);
+}
+
+/* The pill: width + transform are written inline by JS so
+   the transition tweens between the previous and next
+   measured positions. */
+.t-tabs-pill {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  height: 30px;
+  width: 0;
+  background: var(--tabs-pill-bg);
+  border-radius: 48px;
+  transform: translateX(0);
+  transition:
+    transform var(--tabs-dur) var(--tabs-ease),
+    width var(--tabs-dur) var(--tabs-ease);
+  will-change: transform, width;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-tabs-pill,
+  .t-tab {
+    transition: none !important;
+  }
+}
+
+/* Card-specific additions: type matches the old range button, keyboard focus ring. */
+.bc-card .t-tabs {
+  flex: none;
+}
+
+.bc-card .t-tab {
+  font: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.bc-card .t-tab:focus-visible {
+  outline: 2px solid var(--bc-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Plot ---------- */
+
+.bc-chart {
+  position: relative;
+}
+
+.bc-tick,
+.bc-avg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* The AVG line moves with the bars when the range changes, on their curve and timing. */
+.bc-avg {
+  transition: top 600ms var(--bc-ease-smooth-out);
+}
+
+.bc-gridline {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  right: 0;
+  height: 1px;
+  border-radius: 1px;
+  background: var(--bc-grid);
+}
+
+.bc-tick-label,
+.bc-x-label {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+  color: var(--bc-text);
+  white-space: nowrap;
+}
+
+.bc-tick-label {
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 15px;
+  text-align: center;
+}
+
+.bc-avg-line {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--bc-grid) 0 6px,
+    transparent 6px 16px
+  );
+}
+
+.bc-avg-label {
+  position: absolute;
+  top: -12px;
+  left: 0;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--bc-avg-bg);
+  font-family: var(--bc-font-label);
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--bc-avg-text);
+}
+
+.bc-columns {
+  position: absolute;
+  inset: 0 0 0 40px;
+  display: grid;
+}
+
+.bc-column {
+  position: relative;
+  outline: none;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bc-bar {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  overflow: hidden;
+  border: 1px solid var(--bc-bar-border);
+  border-radius: 10px;
+  background: var(--bc-fill-subtle);
+  box-shadow: var(--bc-shadow-bar);
+  /* Height: Bencho's "Stacked bars" (MIT, bencho.dev/licence). Every bar "eases
+     to its new height … a beat after its left neighbour" (14ms × --i), and the
+     same 600ms transition grows them out of the baseline on first view. Its curve,
+     cubic-bezier(0.22, 1, 0.36, 1), is the --bc-ease-smooth-out we already use.
+     Box-shadow: same speed in and out, as a slower fade-out would leave a trail of
+     lit bars when sweeping across. */
+  transition:
+    height 600ms var(--bc-ease-smooth-out) calc(var(--i, 0) * 14ms),
+    opacity var(--bc-duration-quick) var(--bc-ease-smooth-out)
+      calc(var(--i, 0) * 14ms),
+    box-shadow var(--bc-duration-quick) var(--bc-ease-smooth-out);
+}
+
+/* A 0-height bar would still show its 1px border as a line; keep it hidden until it grows. */
+.bc-bar[data-collapsed] {
+  opacity: 0;
+}
+
+/* The fill sits on its own layer so the bar can shrink all the way to 0 while
+   the segments keep the Figma inset. */
+.bc-bar-fill {
+  position: absolute;
+  inset: 3px; /* + 1px border = 4px, as in Figma */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bc-column[data-active="true"] .bc-bar {
+  box-shadow: var(--bc-shadow-raised);
+}
+
+.bc-column:focus-visible .bc-bar {
+  outline: 2px solid var(--bc-focus);
+  outline-offset: 2px;
+}
+
+.bc-segment {
+  flex-basis: 0;
+  min-height: 0;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity var(--bc-duration-quick) var(--bc-ease-smooth-out);
+}
+
+.bc-column[data-active="true"] .bc-segment {
+  opacity: 1;
+}
+
+.bc-x-label {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+}
+
+/* ---------- Tooltip ---------- */
+
+.bc-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 180px;
+  padding: 11px; /* + 1px border = 12px, as in Figma */
+  border: 1px solid var(--bc-border);
+  border-radius: 20px;
+  background: var(--bc-surface);
+  box-shadow: var(--bc-shadow-tooltip);
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.98;
+  transform-origin: right center;
+  transition:
+    opacity var(--bc-duration-quick) ease-out,
+    scale var(--bc-duration-quick) ease-out;
+}
+
+.bc-tooltip[data-side="right"] {
+  transform-origin: left center;
+}
+
+/* First appearance waits 80ms so a passing cursor doesn't flash it; closing never waits. */
+.bc-tooltip[data-visible="true"] {
+  opacity: 1;
+  scale: 1;
+  transition-delay: var(--bc-duration-micro);
+}
+
+/* Already open and moving to another bar: slide over, no delay. */
+.bc-tooltip[data-glide="true"] {
+  transition:
+    opacity var(--bc-duration-quick) ease-out,
+    scale var(--bc-duration-quick) ease-out,
+    transform var(--bc-duration-fast) var(--bc-ease-smooth-out);
+}
+
+.bc-tooltip-date {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--bc-text);
+}
+
+.bc-tooltip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bc-tooltip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.bc-tooltip-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--bc-text);
+}
+
+.bc-dot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.bc-tooltip-value {
+  font-weight: 500;
+  color: var(--bc-text-value);
+  text-align: right;
+}
+
+/* Divider is a 0-height row whose 1px line sits just above it (Figma layout). */
+.bc-tooltip-divider {
+  position: relative;
+  height: 0;
+}
+
+.bc-tooltip-divider img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bc-tooltip,
+  .bc-tooltip[data-glide="true"] {
+    scale: 1;
+    transition: opacity var(--bc-duration-quick) ease-out;
+  }
+
+  .bc-range-menu,
+  .bc-range-menu[data-open="true"] {
+    scale: 1;
+  }
+
+  .bc-range-menu[data-open="true"] {
+    animation-name: bc-fade-in;
+  }
+
+  /* Bars and the AVG line jump straight to their new place; only the hover shadow fades. */
+  .bc-bar {
+    transition: box-shadow var(--bc-duration-quick) var(--bc-ease-smooth-out);
+  }
+
+  .bc-avg {
+    transition: none;
+  }
+}
