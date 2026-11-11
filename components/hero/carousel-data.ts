@@ -30,6 +30,11 @@ export type CardData =
       // The live bar chart demo (ChartDemoCard). Themes itself via prefers-color-scheme.
       type: "chart";
       alt: string;
+    }
+  | {
+      // The live NowPlaying player (NowPlayingCard). Themes itself via the site's tokens.
+      type: "player";
+      alt: string;
     };
 
 export const cards: CardData[] = [
@@ -71,10 +76,8 @@ export const cards: CardData[] = [
     alt: "Project showcase 4",
   },
   {
-    type: "image",
-    themed: false,
-    src: "/hero/New_Asset_Image_5.png",
-    alt: "Project showcase 5",
+    type: "player",
+    alt: "Now playing bar that opens into a player card",
   },
   {
     type: "video",

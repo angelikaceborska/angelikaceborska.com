@@ -1,0 +1,31 @@
+/* The self-playing player: NowPlaying plus a cursor drawn on top of it. */
+.snd-autoplay {
+  position: relative;
+}
+
+/* The bar chart demo's arrow, at the same size relative to the interface it points at. Its tip
+   is the SVG's top-left corner, so the translate written by the script lands the tip on the
+   target, and the click's scale (origin 0 0) shrinks the arrow around that tip. */
+.snd-demo-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 0 0;
+  will-change: translate;
+  transition:
+    opacity 200ms ease-out,
+    scale 120ms ease-out;
+}
+
+.snd-demo-cursor[data-visible="true"] {
+  opacity: 1;
+}
+
+/* the click */
+.snd-demo-cursor[data-press] {
+  scale: 0.85;
+}

@@ -519,8 +519,11 @@
   transition:
     height 600ms var(--bc-ease-smooth-out) calc(var(--i, 0) * 14ms),
     opacity var(--bc-duration-quick) var(--bc-ease-smooth-out)
-      calc(var(--i, 0) * 14ms),
-    box-shadow var(--bc-duration-quick) var(--bc-ease-smooth-out);
+      calc(var(--i, 0) * 14ms);
+  /* No transition on the hover shadow: it switches on and off. A fading
+     box-shadow redraws its blur on every frame of the fade, on two bars at each
+     step of the demo's sweep, and a Safari 27 screen recording showed the strip
+     stalling at those steps. The segments inside still fade in. */
 }
 
 /* A 0-height bar would still show its 1px border as a line; keep it hidden until it grows. */
@@ -589,6 +592,12 @@
   transition:
     opacity var(--bc-duration-quick) ease-out,
     scale var(--bc-duration-quick) ease-out;
+  /* Its own GPU layer for good. Otherwise Safari moves it onto a layer at the
+     start of every fade or glide and flattens it back at the end, and inside a
+     scaled, rounded hero tile each of those redraws much of the tile, photo and
+     blurred shadows included: twice per step of the demo's sweep. A Safari 27
+     screen recording showed the whole strip stalling 50–70ms at those moments. */
+  will-change: transform, scale, opacity;
 }
 
 .bc-tooltip[data-side="right"] {
@@ -686,9 +695,10 @@
     animation-name: bc-fade-in;
   }
 
-  /* Bars and the AVG line jump straight to their new place; only the hover shadow fades. */
+  /* Bars and the AVG line jump straight to their new place (the hover shadow
+     already switches without a fade, see .bc-bar). */
   .bc-bar {
-    transition: box-shadow var(--bc-duration-quick) var(--bc-ease-smooth-out);
+    transition: none;
   }
 
   .bc-avg {

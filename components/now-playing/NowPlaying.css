@@ -1,0 +1,490 @@
+/* NowPlaying — the player's stylesheet.
+
+   ── the player's tokens, answered by the site's ──────────────
+   The rules below read the player's own role names (--ink,
+   --pane, and so on). They are all set here, on the component's
+   own root, so nothing leaks into the page. Where the site
+   already has a token for the same job, the name points at it;
+   where it has none, the value is chosen from the same neutral
+   ramp the site's tokens are built on (app/theme.css) and lives
+   only here. */
+.snd {
+  /* ink: the site's text colour, and the tint the hover and the
+     rail are mixed from */
+  --ink: var(--color-main);
+  --fill-on: var(--color-main);
+  /* Bare numbers, comma separated, because the CSS builds
+     rgba(var(--ink-rgb), 0.35) from them. --color-main is
+     neutral-950 / neutral-50, which is #0a0a0a / #fafafa.
+     light-dark() only takes colours, so the dark value is set
+     in the media query below. */
+  --ink-rgb: 10, 10, 10;
+  /* the site has one quieter ink, and this is its job: the artist
+     line and the times */
+  --ink-4: var(--color-muted);
+  /* No site token sits between text-main and text-muted. The skip
+     glyphs and the heart need one: a step up from muted and a
+     step down from ink. */
+  --ink-3: light-dark(var(--color-neutral-600), var(--color-neutral-300));
+  /* what sits on solid ink (the play mark) is the page ground */
+  --on-ink: var(--color-surface);
+  /* the box is a card on this site, and cards are bg-surface */
+  --pane: var(--color-surface);
+  --pane-edge: var(--color-border);
+  /* the focus ring's inner gap is drawn in the box's own colour */
+  --card: var(--color-surface);
+  /* the sleeve's ground, for the frame before the image decodes */
+  --surface-2: var(--color-surface-secondary);
+  /* one step past surface-secondary; the site stops at two */
+  --surface-3: light-dark(var(--color-neutral-200), var(--color-neutral-800));
+  /* PP Mori, through Tailwind's font-sans */
+  --font-ui: var(--font-sans);
+}
+
+@media (prefers-color-scheme: dark) {
+  .snd {
+    --ink-rgb: 250, 250, 250;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snd-op, .snd-art, .snd-like { transition-duration: 160ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snd-like[data-on] .lucide { animation: none; }
+}
+
+/* ══ NowPlaying ═════════════════════════════════════════════
+   A now-playing bar that opens into a player.
+
+   There is almost nothing here, and that is deliberate: every
+   position, size and radius in this component is written by
+   the tween in NowPlaying.tsx and arrives as an inline style. A
+   transition on any of these rules would be a SECOND opinion
+   about where a thing is, fighting the first one every frame.
+
+   What is left is the material — the surfaces, the type and
+   the two hover states — which never animates with the shape
+   and so has nothing to fight. */
+
+.snd {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-ui);}
+
+/* The object. It is the only thing on the card, so it is the
+   quietest surface that still reads as one: the site's card
+   surface, and a hairline.
+
+   No backdrop-filter: --pane is opaque on this site (it is
+   --color-surface), so a blur would have nothing to show
+   through, and in the hero strip it would be a compositing
+   pass on every frame the strip moves, times four copies.
+
+   ── and no overflow clip ──────────────────────────────────
+   The same lesson as the hero's bar chart: Safari redraws a
+   rounded clip, and a soft shadow, expensively on every frame
+   that the thing under it changes, and the strip around it drops
+   to 30fps. Once the hero's demo folds and opens the card while
+   the strip is moving, that is every frame of every fold. Nothing
+   visible needs it: on the bar, the only things past the box's
+   edge are the times, which are at opacity 0 until the card is
+   most of the way open, and everything else sits inside the
+   margin. The buttons, the rail and the sleeve have none for the
+   same reason; the sleeve clips only while a skip is paging
+   covers through it. */
+.snd-box {
+  position: relative;
+  background: var(--pane);}
+
+/* NO BORDER of its own: the hairline is a spread shadow, switched
+   on by data-stroke on the root. A border would be one more thing
+   the morph has to carry through every frame. */
+[data-stroke="on"] .snd-box { box-shadow: 0 0 0 1px var(--pane-edge); }
+
+/* ── the cover ──────────────────────────────────────────────
+   A real sleeve: a player with a grey gradient where the
+   artwork goes is a wireframe of a player.
+
+   `cover`, not `contain`: the square is the fixed thing here
+   and the picture is cropped to it, so the sleeve is never
+   letterboxed at either end of the morph.
+
+   The gradient stays underneath as the ground. It is what
+   shows for the frame before an image has decoded, and it is
+   what the shape is if the file is ever missing. */
+/* The sleeve is the window the covers page through: it holds the
+   place, the size and the corner. It clips only while a skip is
+   paging (data-paging): at rest the one cover is rounded by its
+   own corner, and a clip here would be redrawn on every frame of
+   the morph (see .snd-box). `isolation` is for Safari, which can
+   let a child moving on its own layer escape a rounded clip. */
+.snd-art {
+  position: absolute;}
+
+.snd-art[data-paging] {
+  overflow: hidden;
+  isolation: isolate;}
+
+/* one cover at rest, two while a skip is paging between them */
+.snd-cover {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--surface-2);
+  background-image:
+    linear-gradient(148deg, var(--surface-3), var(--surface-2));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* the inner hairline from the portfolio's Figma (Art: inner
+     shadow, black at 4%), so a pale cover still has an edge
+     against the pane. Figma blurs it by 1px; here it is a crisp
+     1px, which at 4% looks the same and is not a blur Safari has
+     to redraw on every frame of the morph. */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);}
+
+/* ── the skip ───────────────────────────────────────────────
+   The portfolio's Figma has a Previous and a Next episode.
+
+   THE COVER PAGES, the way Spotify's player does. Next pushes
+   the cover out to the left and brings the next one in from the
+   right; Previous runs it the other way. The two travel as one
+   strip, a gap of 15% of the sleeve between them: 6px on the
+   bar, about the margin on the card, which is where Spotify's
+   pages sit relative to each other. In per cent because
+   translateX measures the cover's own box, and that box is
+   whatever size the morph is at, so a skip mid-morph still pages
+   by exactly one cover. Quart-out like the morph: it leaves
+   quickly and settles, the way a flicked page does.
+
+   The words keep a short travel and a fade from the same side.
+   They sit beside the sleeve rather than under it, so they
+   cannot page without crossing it.
+
+   Everything here is keyed by the skip, so each press mounts a
+   fresh pair, and the first paint has no data-skip, so nothing
+   moves on load. */
+.snd-cover[data-skip="next"] {
+  animation: snd-page-in-next 380ms cubic-bezier(0.22, 1, 0.36, 1);}
+
+.snd-cover[data-skip="prev"] {
+  animation: snd-page-in-prev 380ms cubic-bezier(0.22, 1, 0.36, 1);}
+
+.snd-cover[data-leave="next"] {
+  animation: snd-page-out-next 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;}
+
+.snd-cover[data-leave="prev"] {
+  animation: snd-page-out-prev 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;}
+
+/* `transform`, not the `translate` property: Safari is sure to
+   run a transform on the compositor, and these move while the
+   strip does. */
+@keyframes snd-page-in-next {
+  from { transform: translateX(115%); }}
+
+@keyframes snd-page-in-prev {
+  from { transform: translateX(-115%); }}
+
+@keyframes snd-page-out-next {
+  to { transform: translateX(-115%); }}
+
+@keyframes snd-page-out-prev {
+  to { transform: translateX(115%); }}
+
+.snd-say[data-skip="next"] {
+  animation: snd-in-next 240ms cubic-bezier(0.22, 1, 0.36, 1);}
+
+.snd-say[data-skip="prev"] {
+  animation: snd-in-prev 240ms cubic-bezier(0.22, 1, 0.36, 1);}
+
+@keyframes snd-in-next {
+  from { transform: translateX(6px); opacity: 0; }}
+
+@keyframes snd-in-prev {
+  from { transform: translateX(-6px); opacity: 0; }}
+
+@media (prefers-reduced-motion: reduce) {
+  .snd-cover[data-skip], .snd-say[data-skip] { animation: none; }
+  .snd-cover[data-leave] { display: none; }
+}
+
+/* ── the words ──────────────────────────────────────────────
+   Both lines in one block, so the pair moves as a unit and the
+   artist never arrives before the title.
+
+   Centred by the BOX, not by a number. The block is given the
+   sleeve's own height and told to centre inside it, so the two
+   are level at every size the morph passes through and nothing
+   has to be kept in step by hand — a top edge placed against a
+   guess at how tall two lines of type are would drift as soon
+   as the type sizes changed. */
+.snd-say {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  pointer-events: none;}
+
+/* Clipped, and NOT truncated. The portfolio's Figma runs the
+   whole title inside a clipped frame with a fade over the edge,
+   and a long one scrolls (the effect in NowPlaying.tsx), so an
+   ellipsis would only cut short the words it is about to show. */
+.snd-title {
+  position: relative;
+  color: var(--ink);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  white-space: nowrap;}
+
+/* the clip, on its own so the fades can sit outside it */
+.snd-title-clip {
+  display: block;
+  overflow: hidden;}
+
+/* inline-block, so it can be moved by a transform. Kept on its own
+   GPU layer for good (and the fades below): the scroll stops at
+   every fold of the demo and starts again after, and Safari would
+   otherwise take it off its layer and put it back each time,
+   redrawing much of the hero tile around it — the same stall the
+   bar chart's tooltip caused. */
+.snd-title-run {
+  display: inline-block;
+  will-change: transform;}
+
+/* ── the fades ──────────────────────────────────────────────
+   The Figma "Fade": 33px of the pane's own colour over the
+   edge the title runs out of, so a cut word dissolves rather
+   than stops. In --pane, not white, so it holds in the dark
+   theme too. Only once the title overflows: the right one rests
+   on, as Figma draws it, and the left one rests off. While the
+   title scrolls, the effect hands each of them its opacity.
+
+   ── OUTSIDE the clip, and 2px over its edge ────────────────
+   Inside it, flush with it, the edges flickered while the title
+   scrolled. In the hero the clip's edges land on fractional
+   pixels, and different ones every frame as the strip moves.
+   Text and fade were both cut by that same edge, so in its last
+   pixel each was only partly drawn, and a sliver of every letter
+   showed through the fade as it passed. Out here, the fade is not
+   cut: it carries on two pixels past the clip in solid --pane, so
+   the edge pixel is always covered whole. The overhang lands on
+   the pane, so it paints the card's colour over the card's
+   colour. */
+.snd-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 35px; /* the Figma 33, and the 2px overhang */
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity; /* see .snd-title-run */}
+
+.snd-fade[data-side="left"] {
+  left: -2px;
+  background: linear-gradient(to right, var(--pane) 2px, transparent);}
+
+.snd-fade[data-side="right"] {
+  right: -2px;
+  background: linear-gradient(to left, var(--pane) 2px, transparent);}
+
+.snd-title[data-overflow] .snd-fade[data-side="right"] { opacity: 1; }
+
+.snd-by {
+  color: var(--ink-4);
+  line-height: 1.25;
+  white-space: nowrap;}
+
+/* ── the track ──────────────────────────────────────────────
+   A rail and a run, and the times at either end under it.
+   Nothing here is interactive: this component is about the
+   shape changing, and a scrubber you can drag is a different
+   component that happens to live in the same box. */
+.snd-bar {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;}
+
+.snd-rail {
+  display: block;
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fill-on, #17181a) 12%, transparent);}
+/* No overflow clip on the rail (see .snd-box): the run is a pill
+   of its own and never wider than the rail, so it already ends
+   where the rail does. */
+
+.snd-run {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ink);}
+
+.snd-clock {
+  display: flex;
+  justify-content: space-between;
+  /* ── the interface face, with tabular figures ─────────────
+     A proportional 1 is narrower than a 0, so a counter set in
+     proportional figures shifts on its own every second — which
+     on a track that reads 0:57 → 0:58 → 0:59 is a number that
+     fidgets while you watch it. `tabular-nums` asks the UI font
+     for its fixed-width figures, which it has, so the digits
+     stop moving without bringing in a monospaced face nothing
+     else here uses. */
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  /* 12, per the portfolio's Figma. The times only show on the
+     card, so there is no bar size to grow from. */
+  font-size: 12px;
+  /* 1, so the row is the height of the digits and not of the
+     font's own leading, which would be empty space the layout
+     above has to find room for */
+  line-height: 1;
+  letter-spacing: 0em;
+  color: var(--ink-4);}
+
+/* ── the transport ──────────────────────────────────────────
+   Placed by its CENTRE — the row's own width changes between
+   the two states, so an edge would move even when the middle
+   of it did not. */
+.snd-ops {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  translate: -50% -50%;}
+
+.snd-op {
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  /* no overflow clip (see .snd-box): the glyphs sit well inside,
+     and these buttons change size on every frame of the morph */
+  transition: color 160ms ease, background 160ms ease, scale 160ms cubic-bezier(0.22, 1, 0.36, 1);}
+
+/* [data-hover] and [data-press] are the hero demo's pointer
+   (NowPlayingAutoplay): a scripted click has no :hover and no
+   :active, so it sets these instead, and the controls answer it
+   exactly as they answer a hand. */
+.snd-op:hover,
+.snd-op[data-hover] { color: var(--ink); background: color-mix(in srgb, var(--fill-on, #17181a) 6%, transparent); }
+
+/* ── the press ──────────────────────────────────────────────
+   It yields before it acts. A control that only changes state
+   reads as having been triggered; one that gives under the
+   finger first reads as having been pushed, and the whole
+   difference is about 40ms and four per cent.
+
+   `scale` as its own property, not inside a transform: the
+   row is placed with `translate` and the play button's size
+   is written by the tween, so anything sharing the transform
+   shorthand here would be overwritten every frame. */
+.snd-op:active,
+.snd-op[data-press] { scale: 0.96; }
+
+/* the one you press most, and the only one that is filled */
+.snd-op[data-lead] {
+  background: var(--ink);
+  color: var(--on-ink);}
+
+.snd-op[data-lead]:hover,
+.snd-op[data-lead][data-hover] { background: var(--ink); color: var(--on-ink); opacity: 0.88; }
+
+.snd-op:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--card), 0 0 0 4px rgba(var(--ink-rgb), 0.35);}
+
+/* ── the heart ──────────────────────────────────────────────
+   Built off .snd-op rather than sharing it: it is the same
+   size and the same give, but it is not in the transport row
+   and it is the only control here that stays on after you let
+   go — so it needs a state the row has no use for.
+
+   Ink when it is on, not red. A heart is already the shape
+   that carries the meaning, so the colour has only one job
+   left — to say FILLED — and the loudest ink on the player is
+   what does that without introducing a hue nothing else here
+   uses. It also puts the heart at the same weight as the play
+   button, which is the other solid mark on the card, so the
+   two read as the same kind of thing rather than as a control
+   and a warning. */
+.snd-like {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: color 160ms ease, background 160ms ease,
+    scale 160ms cubic-bezier(0.22, 1, 0.36, 1);}
+
+.snd-like:hover,
+.snd-like[data-hover] { color: var(--ink); background: color-mix(in srgb, var(--fill-on, #17181a) 6%, transparent); }
+
+.snd-like:active,
+.snd-like[data-press] { scale: 0.96; }
+
+.snd-like[data-on] { color: var(--ink); }
+
+.snd-like[data-on]:hover { color: var(--ink); background: color-mix(in srgb, var(--fill-on, #17181a) 6%, transparent); }
+
+/* ── the beat ───────────────────────────────────────────────
+   On the way ON only, which is why it is keyed to the state
+   and not to the press: unliking something does not deserve a
+   flourish, and one that plays both ways reads as a button
+   animating rather than as a thing being liked.
+
+   Overshoot is the whole effect — 1.34 and back, on a curve
+   that passes its target — so it lands as a pulse rather than
+   as a grow. */
+.snd-like[data-on] .lucide {
+  animation: snd-beat 340ms cubic-bezier(0.3, 1.4, 0.5, 1);}
+
+/* the heart beats once a round in the hero demo: on its own layer
+   for good, for the same reason as .snd-title-run */
+.snd-like .lucide { will-change: scale; }
+
+.snd-like:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--card), 0 0 0 4px rgba(var(--ink-rgb), 0.35);}
+
+/* the hit area, and nothing else — see the note in NowPlaying.tsx */
+.snd-tap {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;}
+
+/* the cover gives too — it is the thing you press to change
+   the shape, so it should answer the same way the transport
+   does. Scoped to the ART, not to this: the hit area is
+   invisible and scaling nothing looks like nothing. */
+.snd-box:has(.snd-tap:active) .snd-art,
+.snd-box:has(.snd-tap[data-press]) .snd-art { scale: 0.96; }
+
+.snd-art { transition: scale 160ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+.snd-tap:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--card), 0 0 0 4px rgba(var(--ink-rgb), 0.35);}
+
+@keyframes snd-beat {
+  0% { scale: 1; }
+  38% { scale: 1.34; }
+  100% { scale: 1; }}
