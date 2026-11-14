@@ -32,8 +32,8 @@ const STEP_MS = 1000 / 60;
 const WALL = 200;
 const PARKED = "translate3d(-200vw, -200vh, 0)";
 
-// Physics sticker pile for touch devices: stickers rain into the card, can be
-// dragged and tossed, and tapping the empty floor drops a fresh set.
+// Physics sticker pile: stickers rain into the card, can be dragged and tossed
+// (touch or mouse), and tapping or clicking the empty floor drops a fresh set.
 export function StickerRain() {
   const stageRef = useRef<HTMLDivElement>(null);
   const figureRefs = useRef<(HTMLElement | null)[]>([]);
@@ -76,7 +76,8 @@ export function StickerRain() {
       role="button"
       tabIndex={0}
       aria-label="Drop the stickers again"
-      className="absolute inset-0 rounded-[inherit] outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-[#ffcd33] focus-visible:-outline-offset-2 data-dragging:cursor-grabbing"
+      // select-none: a mouse drag that crosses the headline doesn't select it.
+      className="absolute inset-0 rounded-[inherit] select-none outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-[#ffcd33] focus-visible:-outline-offset-2 data-dragging:cursor-grabbing"
     >
       {armed &&
         STICKERS.map((src, i) => (
@@ -87,7 +88,9 @@ export function StickerRain() {
             }}
             // touch-none: a touch that starts on a sticker drags it instead of
             // scrolling the page. Touches on the empty card still scroll.
-            className="absolute top-0 left-0 size-[var(--d)] touch-none motion-reduce:touch-auto [transform:translate3d(-200vw,-200vh,0)] will-change-transform motion-reduce:will-change-auto [--ring:var(--color-neutral-950)] dark:[--ring:var(--color-neutral-50)] data-grabbed:[filter:drop-shadow(1.5px_0_0_var(--ring))_drop-shadow(-1.5px_0_0_var(--ring))_drop-shadow(0_1.5px_0_var(--ring))_drop-shadow(0_-1.5px_0_var(--ring))]"
+            // rounded-full: the grab cursor covers the same circle as the
+            // physics body, so it only shows where a press would pick it up.
+            className="absolute top-0 left-0 size-[var(--d)] rounded-full cursor-grab in-data-dragging:cursor-grabbing motion-reduce:cursor-auto touch-none motion-reduce:touch-auto [transform:translate3d(-200vw,-200vh,0)] will-change-transform motion-reduce:will-change-auto [--ring:var(--color-neutral-950)] dark:[--ring:var(--color-neutral-50)] data-grabbed:[filter:drop-shadow(1.5px_0_0_var(--ring))_drop-shadow(-1.5px_0_0_var(--ring))_drop-shadow(0_1.5px_0_var(--ring))_drop-shadow(0_-1.5px_0_var(--ring))]"
           >
             <Image
               src={src}
