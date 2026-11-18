@@ -9,7 +9,9 @@ export function StickerStage({
   children: ReactNode;
 }) {
   return (
-    <section className={`relative overflow-hidden ${className}`}>
+    // overflow-clip, not hidden: a hidden box can still be scrolled, and
+    // focusing a sticker tossed past the edge would scroll the whole pile.
+    <section className={`relative overflow-clip ${className}`}>
       <StickerRain />
       {children}
     </section>

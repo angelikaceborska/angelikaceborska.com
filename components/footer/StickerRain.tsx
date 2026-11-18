@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type Matter from "matter-js";
+import { StickerNote, type StickerNoteHandle } from "./StickerNote";
 import { STICKERS } from "./stickers";
 
 // How fast stickers fall (Matter.js units).
@@ -34,9 +35,11 @@ const PARKED = "translate3d(-200vw, -200vh, 0)";
 
 // Physics sticker pile: stickers rain into the card, can be dragged and tossed
 // (touch or mouse), and tapping or clicking the empty floor drops a fresh set.
+// Clicking or tapping a sticker without dragging it opens its note card.
 export function StickerRain() {
   const stageRef = useRef<HTMLDivElement>(null);
-  const figureRefs = useRef<(HTMLElement | null)[]>([]);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const noteRef = useRef<StickerNoteHandle>(null);
   // Stickers (and Matter.js itself) only load once the footer is near the
   // viewport, so they cost nothing on initial page load.
   const [armed, setArmed] = useState(false);
@@ -62,7 +65,10 @@ export function StickerRain() {
     let disposed = false;
     let teardown = () => {};
     import("matter-js").then(({ default: lib }) => {
-      if (!disposed) teardown = simulate(lib, stage, figureRefs.current);
+      if (disposed) return;
+      teardown = simulate(lib, stage, buttonRefs.current, (i) =>
+        noteRef.current?.open(STICKERS[i]),
+      );
     });
     return () => {
       disposed = true;
@@ -71,46 +77,62 @@ export function StickerRain() {
   }, [armed]);
 
   return (
-    <div
-      ref={stageRef}
-      role="button"
-      tabIndex={0}
-      aria-label="Drop the stickers again"
-      // select-none: a mouse drag that crosses the headline doesn't select it.
-      className="absolute inset-0 rounded-[inherit] select-none outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-[#ffcd33] focus-visible:-outline-offset-2 data-dragging:cursor-grabbing"
-    >
-      {armed &&
-        STICKERS.map((src, i) => (
-          <figure
-            key={src}
-            ref={(el) => {
-              figureRefs.current[i] = el;
-            }}
-            // touch-none: a touch that starts on a sticker drags it instead of
-            // scrolling the page. Touches on the empty card still scroll.
-            // rounded-full: the grab cursor covers the same circle as the
-            // physics body, so it only shows where a press would pick it up.
-            className="absolute top-0 left-0 size-[var(--d)] rounded-full cursor-grab in-data-dragging:cursor-grabbing motion-reduce:cursor-auto touch-none motion-reduce:touch-auto [transform:translate3d(-200vw,-200vh,0)] will-change-transform motion-reduce:will-change-auto [--ring:var(--color-neutral-950)] dark:[--ring:var(--color-neutral-50)] data-grabbed:[filter:drop-shadow(1.5px_0_0_var(--ring))_drop-shadow(-1.5px_0_0_var(--ring))_drop-shadow(0_1.5px_0_var(--ring))_drop-shadow(0_-1.5px_0_var(--ring))]"
-          >
-            <Image
-              src={src}
-              alt=""
-              width={200}
-              height={200}
-              sizes="80px"
-              loading="eager"
-              draggable={false}
-              className="pointer-events-none size-full object-contain select-none"
-            />
-          </figure>
-        ))}
-    </div>
+    <>
+      <div
+        ref={stageRef}
+        role="group"
+        aria-label="Stickers"
+        // select-none: a mouse drag that crosses the headline doesn't select it.
+        className="absolute inset-0 rounded-[inherit] select-none data-dragging:cursor-grabbing"
+      >
+        {armed &&
+          STICKERS.map((sticker, i) => (
+            <button
+              key={sticker.name}
+              ref={(el) => {
+                buttonRefs.current[i] = el;
+              }}
+              type="button"
+              aria-label={`${sticker.name} sticker`}
+              aria-haspopup="dialog"
+              // Parked off-screen until it drops. simulate() takes over from
+              // here, and this component doesn't render again to undo it.
+              inert
+              // touch-none: a touch that starts on a sticker drags it instead of
+              // scrolling the page. Touches on the empty card still scroll.
+              // rounded-full: the grab cursor covers the same circle as the
+              // physics body, so it only shows where a press would pick it up.
+              className="absolute top-0 left-0 size-[var(--d)] rounded-full cursor-grab in-data-dragging:cursor-grabbing motion-reduce:cursor-pointer touch-none motion-reduce:touch-auto outline-none [-webkit-tap-highlight-color:transparent] [transform:translate3d(-200vw,-200vh,0)] will-change-transform motion-reduce:will-change-auto [--ring:var(--color-neutral-950)] dark:[--ring:var(--color-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)] data-grabbed:[filter:drop-shadow(1.5px_0_0_var(--ring))_drop-shadow(-1.5px_0_0_var(--ring))_drop-shadow(0_1.5px_0_var(--ring))_drop-shadow(0_-1.5px_0_var(--ring))]"
+            >
+              <Image
+                src={sticker.src}
+                alt=""
+                width={400}
+                height={400}
+                // A sticker is 13% of the card's short side: about 6% of the
+                // viewport width on wider screens (where the card keeps its
+                // 1696/748 shape) and 13% on phones.
+                sizes="(min-width: 48rem) 6vw, 13vw"
+                loading="eager"
+                draggable={false}
+                className="pointer-events-none size-full object-contain select-none"
+              />
+            </button>
+          ))}
+      </div>
+      <StickerNote ref={noteRef} />
+    </>
   );
 }
 
-type Sticker = { body: Matter.Body; el: HTMLElement; r: number };
+type Piece = { body: Matter.Body; el: HTMLElement; r: number };
 
-function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement | null)[]) {
+function simulate(
+  lib: typeof Matter,
+  stage: HTMLElement,
+  figures: (HTMLElement | null)[],
+  openNote: (index: number) => void,
+) {
   const { Engine, Bodies, Body, Composite, Mouse, MouseConstraint, Query, Sleeping } = lib;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const md = window.matchMedia("(min-width: 48rem)");
@@ -131,10 +153,23 @@ function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement 
   let width = 0;
   let height = 0;
   let walls: Matter.Body[] = [];
-  let stickers: Sticker[] = [];
+  let stickers: Piece[] = [];
   let timers: number[] = [];
   let pending = 0;
   let grabbed: HTMLElement | null = null;
+  // Roving tab stop: the pile is a single Tab stop, and the arrow keys move
+  // between stickers from left to right.
+  let tabStop: HTMLElement | null = null;
+  const setTabStop = (el: HTMLElement | null) => {
+    if (tabStop && tabStop !== el) tabStop.tabIndex = -1;
+    tabStop = el;
+    if (el) el.tabIndex = 0;
+  };
+  const park = (el: HTMLElement) => {
+    el.style.transform = PARKED;
+    el.inert = true;
+    el.tabIndex = -1;
+  };
   let raf = 0;
   let last = 0;
   let acc = 0;
@@ -201,7 +236,8 @@ function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement 
     mouse.button = -1;
     Composite.remove(engine.world, stickers.map((s) => s.body));
     stickers = [];
-    for (const el of figures) if (el) el.style.transform = PARKED;
+    for (const el of figures) if (el) park(el);
+    tabStop = null;
     buildWalls();
 
     const d = Math.round(Math.min(width, height) * BASE_SIZE_FACTOR);
@@ -220,6 +256,8 @@ function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement 
     };
     const release = (el: HTMLElement, x: number, y: number) => {
       el.style.setProperty("--d", `${d}px`);
+      el.inert = false;
+      if (!tabStop) setTabStop(el);
       const body = Bodies.circle(x, y, r, bodyOptions);
       Composite.add(engine.world, body);
       stickers.push({ body, el, r });
@@ -254,7 +292,7 @@ function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement 
     });
   };
 
-  let press: { x: number; y: number; onSticker: boolean; moved: boolean } | null = null;
+  let press: { x: number; y: number; sticker: Piece | undefined; moved: boolean } | null = null;
   const local = (e: PointerEvent) => {
     const rect = stage.getBoundingClientRect();
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
@@ -262,9 +300,10 @@ function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement 
   const onPointerDown = (e: PointerEvent) => {
     if (!e.isPrimary || e.button !== 0) return;
     const p = local(e);
-    const onSticker = Query.point(stickers.map((s) => s.body), p).length > 0;
-    press = { ...p, onSticker, moved: false };
-    if (onSticker && !reducedMotion.matches) {
+    const [hit] = Query.point(stickers.map((s) => s.body), p);
+    const sticker = stickers.find((s) => s.body === hit);
+    press = { ...p, sticker, moved: false };
+    if (sticker && !reducedMotion.matches) {
       mouse.position.x = p.x;
       mouse.position.y = p.y;
       mouse.button = 0;
@@ -284,7 +323,12 @@ function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement 
     // Releasing the constraint leaves the sticker with whatever velocity the
     // drag gave it, which is what makes the toss.
     mouse.button = -1;
-    if (!press.onSticker && !press.moved) drop();
+    // A press that stayed put is a tap: on a sticker it opens the note, on
+    // the empty floor it drops a fresh set.
+    if (!press.moved) {
+      if (press.sticker) openNote(figures.indexOf(press.sticker.el));
+      else drop();
+    }
     press = null;
   };
   const onPointerCancel = () => {
@@ -292,15 +336,43 @@ function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement 
     press = null;
   };
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key !== "Enter" && e.key !== " ") return;
+    const el = e.target as HTMLElement;
+    const index = figures.indexOf(el);
+    if (index === -1) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openNote(index);
+      return;
+    }
+    const order = [...stickers]
+      .sort((a, b) => a.body.position.x - b.body.position.x)
+      .map((s) => s.el);
+    const at = order.indexOf(el);
+    const next =
+      e.key === "Home"
+        ? order[0]
+        : e.key === "End"
+          ? order.at(-1)
+          : e.key === "ArrowRight" || e.key === "ArrowDown"
+            ? order[(at + 1) % order.length]
+            : e.key === "ArrowLeft" || e.key === "ArrowUp"
+              ? order[(at - 1 + order.length) % order.length]
+              : undefined;
+    if (!next) return;
     e.preventDefault();
-    drop();
+    next.focus({ preventScroll: true });
+  };
+  // Clicking a sticker focuses it too, so Tab comes back to the last one used.
+  const onFocusIn = (e: FocusEvent) => {
+    const el = e.target as HTMLElement;
+    if (figures.includes(el)) setTabStop(el);
   };
   stage.addEventListener("pointerdown", onPointerDown);
   stage.addEventListener("pointermove", onPointerMove);
   stage.addEventListener("pointerup", onPointerUp);
   stage.addEventListener("pointercancel", onPointerCancel);
   stage.addEventListener("keydown", onKeyDown);
+  stage.addEventListener("focusin", onFocusIn);
 
   let resizeTimer = 0;
   const resize = new ResizeObserver(() => {
@@ -341,6 +413,7 @@ function simulate(lib: typeof Matter, stage: HTMLElement, figures: (HTMLElement 
     stage.removeEventListener("pointerup", onPointerUp);
     stage.removeEventListener("pointercancel", onPointerCancel);
     stage.removeEventListener("keydown", onKeyDown);
+    stage.removeEventListener("focusin", onFocusIn);
     Composite.clear(engine.world, false);
     Engine.clear(engine);
   };
