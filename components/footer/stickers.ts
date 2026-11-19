@@ -62,5 +62,5 @@ export const STICKERS: Sticker[] = [
   sticker("Text selection", "purple", "Backstory", "As a teenager, I dreamed of becoming a journalist. I still love a good story and asking questions."),
   sticker("Toolkit", "purple", "How I work", "I'm glad to learn a new tool if it solves a problem, but not just because it's trendy."),
   sticker("Vector pen", "pink", "Quirks", "I've made peace with the fact that not everything in life needs perfectly aligned anchor points."),
-  sticker("Website", "purple", "Fun fact", "I've spent years making websites easier to use. Building my own portfolio is somehow harder."),
+  sticker("Website", "purple", "Fun fact", "I've spent years making products easier to use. Building my own portfolio is somehow harder."),
 ];
